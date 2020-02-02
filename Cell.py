@@ -79,7 +79,6 @@ class Cell:
         if left and not left.visited:
             neighbors.append(left)
 
-        # TODO maybe dive this in 2 separate functions
         # Pick a random neighbor
         if len(neighbors) > 0:
             r = int(random.randrange(0, len(neighbors)))
@@ -117,14 +116,3 @@ class Cell:
             self.neighbors.append(grid[self.i][self.j + 1])  # bottom
         if self.i > 0:
             self.neighbors.append(grid[self.i - 1][self.j])  # left
-
-            # Diagonals
-        #
-        # if self.i > 0 and self.j > 0:
-        #     self.neighbors.append(grid[self.i - 1][self.j - 1])  # topleft
-        # if self.i > 0 and self.j < rows - 1:
-        #     self.neighbors.append(grid[self.i - 1][self.j + 1])  # bottomleft
-        # if self.i < cols - 1 and self.j > 0:
-        #     self.neighbors.append(grid[self.i + 1][self.j - 1])  # topright
-        # if self.i < cols - 1 and self.j < rows - 1:
-        #     self.neighbors.append(grid[self.i + 1][self.j + 1])  # bottomright

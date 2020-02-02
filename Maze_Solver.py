@@ -32,7 +32,7 @@ class Game:
         self.closedSet = []
         self.path = []
 
-        pygame.display.set_caption("Maze Generator")
+        pygame.display.set_caption("Maze Solver")
 
     def run(self):
         """
@@ -157,7 +157,7 @@ class Game:
         if self.generated:
             # OpenSet
             for i in range(len(self.openSet)):
-                self.openSet[i].show(self.screen, self.w, green, 12)
+                self.openSet[i].show(self.screen, self.w, blue, 12)
 
             # ClosedSet
             for i in range(len(self.closedSet)):
@@ -165,7 +165,7 @@ class Game:
 
             # Path
             for i in range(len(self.path)):
-                self.path[i].show(self.screen, self.w, blue, 10)
+                self.path[i].show(self.screen, self.w, green, 10)
 
             self.end.show(self.screen, self.w, yellow, 1)
             self.start.show(self.screen, self.w, yellow, 1)
@@ -235,15 +235,6 @@ class Game:
             return 'bottom'
         elif b.j < a.j:
             return 'top'
-        # Diagonal
-        # if b.i > a.i and b.j < a.j:
-        #     return 'top_right'
-        # elif b.i > a.i and b.j > a.j:
-        #     return 'bottom_right'
-        # if b.i < a.i and b.j < a.j:
-        #     return 'top_left'
-        # elif b.i < a.i and b.j > a.j:
-        #     return 'bottom_left'
 
 
 g = Game()
