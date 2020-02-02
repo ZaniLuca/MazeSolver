@@ -5,6 +5,7 @@ made following TheCodingTrain tutorials
 https://www.youtube.com/user/shiffman
 """
 import pygame
+import math
 from Cell import Cell
 from Colors import *
 
@@ -22,7 +23,13 @@ class Game:
         self.grid = [[None for i in range(self.width // self.w)] for j in
                      range(self.height // self.w)]
         self.stack = []
-        self.done = False
+        self.generated = False
+        self.solved = False
+        self.start = None
+        self.end = None
+        self.openSet = []
+        self.closedSet = []
+        self.path = []
 
         pygame.display.set_caption("Maze Generator")
 
@@ -39,7 +46,7 @@ class Game:
         while run:
             clock.tick(self.fps)
 
-            if not self.done:
+            if not self.generated:
                 current.visited = True
                 current.highlight(self.screen, self.w)
                 pygame.display.update()
@@ -55,10 +62,58 @@ class Game:
                 elif len(self.stack) > 0:
                     current = self.stack.pop()
                 else:
-                    self.done = True
+                    self.generated = True
+                    self.start = self.grid[0][0]
+                    self.end = self.grid[self.width // self.w - 1][self.height // self.w - 1]
+                    self.openSet.append(self.start)
             else:
-                pass
-                #Solve
+                # Solving
+                if not self.solved:
+                    if len(self.openSet) > 0:
+                        best = 0  # Index of the lowest F cell
+                        for i in range(len(self.openSet)):
+                            if self.openSet[i].f < self.openSet[best].f:
+                                best = i
+
+                        current = self.openSet[best]
+
+                        # Win Condition
+                        if self.openSet[best] == self.end:
+                            temp = current
+                            self.path.append(temp)
+                            while temp.previous:
+                                self.path.append(temp.previous)
+                                temp = temp.previous
+
+                            self.solved = True
+                            print('Done!')
+
+                        self.openSet.remove(current)  # Potrebbe non andare
+                        self.closedSet.append(current)
+
+                        # Evaluating neighbors
+                        for i in range(len(current.neighbors)):
+                            neighbor = current.neighbors[i]
+
+                            if neighbor not in self.closedSet:
+                                temp_g = current.g + 1
+
+                                # Check if i have evaluated the neighbor before
+                                # if so we have a better G score
+                                if neighbor in self.openSet:
+                                    if temp_g < neighbor.g:
+                                        neighbor.g = temp_g
+                                # otherwise just give the neighbor the temp_g
+                                else:
+                                    neighbor.g = temp_g
+                                    self.openSet.append(neighbor)
+
+                                neighbor.h = self.heuristic(neighbor)
+                                neighbor.f = neighbor.g + neighbor.h
+                                neighbor.previous = current
+
+                    else:
+                        print('No Solution')
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -73,9 +128,25 @@ class Game:
         :return: None
         """
         self.screen.fill(white)
+
         for i in range(self.width // self.w):
             for j in range(self.height // self.w):
-                self.grid[i][j].show(self.screen, self.w)
+                self.grid[i][j].show(self.screen, self.w, grey)
+        if self.generated:
+            # OpenSet
+            for i in range(len(self.openSet)):
+                self.openSet[i].show(self.screen, self.w, green)
+
+            # ClosedSet
+            for i in range(len(self.closedSet)):
+                self.closedSet[i].show(self.screen, self.w, red)
+
+            # Path
+            for i in range(len(self.path)):
+                self.path[i].show(self.screen, self.w, blue)
+
+            self.end.show(self.screen, self.w, yellow)
+            self.start.show(self.screen, self.w, yellow)
         pygame.display.flip()
 
     def createGrid(self):
@@ -87,6 +158,11 @@ class Game:
         for i in range(self.width // self.w):  # Cols
             for j in range(self.height // self.w):  # Rows
                 self.grid[i][j] = Cell(i, j)
+
+        # Adds Neighbors
+        for i in range(self.width // self.w):
+            for j in range(self.height // self.w):
+                self.grid[i][j].addNeighbors(self.grid, self.width // self.w, self.height // self.w)
 
     def removeWalls(self, a, b):
         """
@@ -109,6 +185,16 @@ class Game:
         elif y == -1:
             a.walls[2] = False
             b.walls[0] = False
+
+    def heuristic(self, neighbor):
+        """
+        Calculate the h cost from the neighbor to the end
+        h cost = distance from neighbir --> end
+        :param neighbor: Cell
+        :return: double
+        """
+        distance = math.sqrt((neighbor.i - self.end.i) ** 2 + (neighbor.j - self.end.j) ** 2)
+        return distance
 
 
 g = Game()
