@@ -20,12 +20,13 @@ class Cell:
         self.neighbors = []
         self.previous = None
 
-    def show(self, screen, w, color):
+    def show(self, screen, w, color, decrement):
         """
         Shows the walls around the cell
         :param screen: screen
         :param w: int
         :param color: color
+        :param decrement: int
         :return: None
         """
         x = self.i * w
@@ -41,7 +42,7 @@ class Cell:
             pygame.draw.line(screen, black, (x, y + w), (x, y), 2)
 
         if self.visited:
-            rect = pygame.Rect(x + 2, y + 2, w -3, w- 3)
+            rect = pygame.Rect(x + 2 + decrement//2, y + 2 + decrement//2, w - decrement, w - decrement)
             pygame.draw.rect(screen, color, rect)
 
     def randomNeighbor(self, grid, cols, rows):

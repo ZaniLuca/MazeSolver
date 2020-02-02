@@ -16,11 +16,11 @@ pygame.display.init()
 class Game:
 
     def __init__(self):
-        self.width = 400
-        self.height = 400
+        self.width = 800
+        self.height = 800
         self.w = 50
         self.screen = pygame.display.set_mode((self.width, self.height))
-        self.fps = 30
+        self.fps = 60
         self.grid = [[None for i in range(self.width // self.w)] for j in
                      range(self.height // self.w)]
         self.stack = []
@@ -119,7 +119,6 @@ class Game:
                                 #     canGo = True
 
                                 if canGo:
-                                    print(pos)
                                     temp_g = current.g + 1
                                     # Check if i have evaluated the neighbor before
                                     # if so we have a better G score
@@ -154,22 +153,22 @@ class Game:
 
         for i in range(self.width // self.w):
             for j in range(self.height // self.w):
-                self.grid[i][j].show(self.screen, self.w, grey)
+                self.grid[i][j].show(self.screen, self.w, grey, 0)
         if self.generated:
             # OpenSet
             for i in range(len(self.openSet)):
-                self.openSet[i].show(self.screen, self.w, green)
+                self.openSet[i].show(self.screen, self.w, green, 12)
 
             # ClosedSet
             for i in range(len(self.closedSet)):
-                self.closedSet[i].show(self.screen, self.w, red)
+                self.closedSet[i].show(self.screen, self.w, red, 12)
 
             # Path
             for i in range(len(self.path)):
-                self.path[i].show(self.screen, self.w, blue)
+                self.path[i].show(self.screen, self.w, blue, 10)
 
-            self.end.show(self.screen, self.w, yellow)
-            self.start.show(self.screen, self.w, yellow)
+            self.end.show(self.screen, self.w, yellow, 1)
+            self.start.show(self.screen, self.w, yellow, 1)
         pygame.display.flip()
 
     def createGrid(self):
