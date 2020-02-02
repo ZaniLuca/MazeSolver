@@ -41,10 +41,10 @@ class Cell:
             pygame.draw.line(screen, black, (x, y + w), (x, y), 2)
 
         if self.visited:
-            rect = pygame.Rect(x + 2, y + 2, w, w)
+            rect = pygame.Rect(x + 2, y + 2, w -3, w- 3)
             pygame.draw.rect(screen, color, rect)
 
-    def checkNeighbors(self, grid, cols, rows):
+    def randomNeighbor(self, grid, cols, rows):
         """
         check every neighbor around the selected cell
         and return a random one
@@ -53,7 +53,6 @@ class Cell:
         :param grid: grid
         :return: random index
         """
-        # TODO rename addWalls
         neighbors = []
 
         top = None
@@ -119,12 +118,12 @@ class Cell:
             self.neighbors.append(grid[self.i - 1][self.j])  # left
 
             # Diagonals
-
-        if self.i > 0 and self.j > 0:
-            self.neighbors.append(grid[self.i - 1][self.j - 1])  # topleft
-        if self.i > 0 and self.j < rows - 1:
-            self.neighbors.append(grid[self.i - 1][self.j + 1])  # bottomleft
-        if self.i < cols - 1 and self.j > 0:
-            self.neighbors.append(grid[self.i + 1][self.j - 1])  # topright
-        if self.i < cols - 1 and self.j < rows - 1:
-            self.neighbors.append(grid[self.i + 1][self.j + 1])  # bottomright
+        #
+        # if self.i > 0 and self.j > 0:
+        #     self.neighbors.append(grid[self.i - 1][self.j - 1])  # topleft
+        # if self.i > 0 and self.j < rows - 1:
+        #     self.neighbors.append(grid[self.i - 1][self.j + 1])  # bottomleft
+        # if self.i < cols - 1 and self.j > 0:
+        #     self.neighbors.append(grid[self.i + 1][self.j - 1])  # topright
+        # if self.i < cols - 1 and self.j < rows - 1:
+        #     self.neighbors.append(grid[self.i + 1][self.j + 1])  # bottomright

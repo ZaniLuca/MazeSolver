@@ -10,6 +10,7 @@ from Cell import Cell
 from Colors import *
 
 pygame.init()
+pygame.display.init()
 
 
 class Game:
@@ -50,7 +51,7 @@ class Game:
                 current.visited = True
                 current.highlight(self.screen, self.w)
                 pygame.display.update()
-                next_cell = current.checkNeighbors(self.grid, self.width // self.w, self.height // self.w)
+                next_cell = current.randomNeighbor(self.grid, self.width // self.w, self.height // self.w)
 
                 if next_cell:
                     next_cell.visited = True
@@ -88,7 +89,7 @@ class Game:
                             self.solved = True
                             print('Done!')
 
-                        self.openSet.remove(current)  # Potrebbe non andare
+                        self.openSet.remove(current)
                         self.closedSet.append(current)
 
                         # Evaluating neighbors
@@ -96,21 +97,43 @@ class Game:
                             neighbor = current.neighbors[i]
 
                             if neighbor not in self.closedSet:
-                                temp_g = current.g + 1
+                                canGo = False
+                                pos = self.checkPosition(current, neighbor)
 
-                                # Check if i have evaluated the neighbor before
-                                # if so we have a better G score
-                                if neighbor in self.openSet:
-                                    if temp_g < neighbor.g:
+                                if pos == 'top' and not current.walls[0]:
+                                    canGo = True
+                                elif pos == 'right' and not current.walls[1]:
+                                    canGo = True
+                                elif pos == 'bottom' and not current.walls[2]:
+                                    canGo = True
+                                elif pos == 'left' and not current.walls[3]:
+                                    canGo = True
+
+                                # if pos == 'top_right' and not current.walls[0] and not current.walls[1]:
+                                #     canGo = True
+                                # elif pos == 'bottom_right' and not current.walls[2] and not current.walls[1]:
+                                #     canGo = True
+                                # elif pos == 'top_left' and not current.walls[0] and not current.walls[3]:
+                                #     canGo = True
+                                # elif pos == 'bottom_left' and not current.walls[2] and not current.walls[3]:
+                                #     canGo = True
+
+                                if canGo:
+                                    print(pos)
+                                    temp_g = current.g + 1
+                                    # Check if i have evaluated the neighbor before
+                                    # if so we have a better G score
+                                    if neighbor in self.openSet:
+                                        if temp_g < neighbor.g:
+                                            neighbor.g = temp_g
+                                    # otherwise just give the neighbor the temp_g
+                                    else:
                                         neighbor.g = temp_g
-                                # otherwise just give the neighbor the temp_g
-                                else:
-                                    neighbor.g = temp_g
-                                    self.openSet.append(neighbor)
+                                        self.openSet.append(neighbor)
 
-                                neighbor.h = self.heuristic(neighbor)
-                                neighbor.f = neighbor.g + neighbor.h
-                                neighbor.previous = current
+                                    neighbor.h = self.heuristic(neighbor)
+                                    neighbor.f = neighbor.g + neighbor.h
+                                    neighbor.previous = current
 
                     else:
                         print('No Solution')
@@ -195,6 +218,33 @@ class Game:
         """
         distance = math.sqrt((neighbor.i - self.end.i) ** 2 + (neighbor.j - self.end.j) ** 2)
         return distance
+
+    def checkPosition(self, a, b):
+        """
+        check where B is based on A
+        :param a: cell
+        :param b: cell
+        :return: string
+        """
+        # Horizontal
+        if b.i > a.i:
+            return 'right'
+        elif b.i < a.i:
+            return 'left'
+        # Vetical
+        if b.j > a.j:
+            return 'bottom'
+        elif b.j < a.j:
+            return 'top'
+        # Diagonal
+        # if b.i > a.i and b.j < a.j:
+        #     return 'top_right'
+        # elif b.i > a.i and b.j > a.j:
+        #     return 'bottom_right'
+        # if b.i < a.i and b.j < a.j:
+        #     return 'top_left'
+        # elif b.i < a.i and b.j > a.j:
+        #     return 'bottom_left'
 
 
 g = Game()
