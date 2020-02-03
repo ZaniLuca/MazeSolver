@@ -16,11 +16,11 @@ pygame.display.init()
 class Game:
 
     def __init__(self):
-        self.width = 400
-        self.height = 400
+        self.width = 600
+        self.height = 600
         self.w = 50
         self.screen = pygame.display.set_mode((self.width, self.height))
-        self.fps = 15
+        self.fps = 60
         # Initialize the 2D array
         self.grid = [[None for i in range(self.width // self.w)] for j in
                      range(self.height // self.w)]
@@ -177,11 +177,14 @@ class Game:
         """
         self.screen.fill(white)
 
+        # Grid
         for i in range(self.width // self.w):
             for j in range(self.height // self.w):
                 self.grid[i][j].show(self.screen, self.w, bg, 0, False)
+
         if self.generated:
             if not self.solved:
+
                 # OpenSet
                 for i in range(len(self.openSet)):
                     self.openSet[i].show(self.screen, self.w, blue, 12, False)
@@ -196,6 +199,7 @@ class Game:
 
             self.end.show(self.screen, self.w, start_end, 25, False)
             self.start.show(self.screen, self.w, start_end, 25, False)
+
         pygame.display.flip()
 
     def createGrid(self):
@@ -203,12 +207,12 @@ class Game:
         create the grid
         :return: None
         """
-
+        # Create every cell
         for i in range(self.width // self.w):  # Cols
             for j in range(self.height // self.w):  # Rows
                 self.grid[i][j] = Cell(i, j)
 
-        # Adds Neighbors
+        # and then add every neighbor
         for i in range(self.width // self.w):
             for j in range(self.height // self.w):
                 self.grid[i][j].addNeighbors(self.grid, self.width // self.w, self.height // self.w)
@@ -252,12 +256,14 @@ class Game:
         :param b: cell
         :return: string
         """
-        # Horizontal
+
+        # check for the HORIZONTAL position
         if b.i > a.i:
             return 'right'
         elif b.i < a.i:
             return 'left'
-        # Vetical
+
+        # check for the VERTICAL position
         if b.j > a.j:
             return 'bottom'
         elif b.j < a.j:
