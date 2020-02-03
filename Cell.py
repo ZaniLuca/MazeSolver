@@ -20,14 +20,14 @@ class Cell:
         self.neighbors = []
         self.previous = None
 
-    def show(self, screen, w, color, decrement, path):
+    def show(self, screen, w, color, decrement, ispath):
         """
         Shows the walls around the cell
         :param screen: screen
         :param w: int
         :param color: color
         :param decrement: int
-        :param path: bool
+        :param ispath: bool
         :return: None
         """
         x = self.i * w
@@ -42,8 +42,12 @@ class Cell:
         if self.walls[3]:
             pygame.draw.line(screen, walls, (x, y + w), (x, y), 2)
 
+        # if the cell has been visited draw a rectangle in it,
+        # otherwise if we want to draw a path --> ispath == True
+        # draw a circle
+
         if self.visited:
-            if path:
+            if ispath:
                 pygame.draw.circle(screen, color, (x + 2 + w // 2, y + 2 + w // 2), decrement)
             else:
                 rect = pygame.Rect(x + 2 + decrement // 2, y + 2 + decrement // 2, w - decrement, w - decrement)
@@ -60,10 +64,11 @@ class Cell:
         """
         neighbors = []
 
-        top = None
-        right = None
-        bottom = None
-        left = None
+        top, right, bottom, left = None, None, None, None
+
+        # Here we just make sure that the neighbor we're going to add
+        # meets the requirements (example isn't in a wrong spot)
+        # and we add it to the temporary array neighbors []
 
         if self.j > 0:
             top = grid[self.i][self.j - 1]
@@ -74,6 +79,9 @@ class Cell:
         if self.i > 0:
             left = grid[self.i - 1][self.j]
 
+        # we wanna make sure that we haven't already visited
+        # the neighbor so we check if it exists and it hasn't been visited
+
         if top and not top.visited:
             neighbors.append(top)
         if right and not right.visited:
@@ -83,10 +91,11 @@ class Cell:
         if left and not left.visited:
             neighbors.append(left)
 
-        # Pick a random neighbor
+        # then if there is at least one neighbor in the array we can
+        # randomly pick one and return it
+
         if len(neighbors) > 0:
-            r = int(random.randrange(0, len(neighbors)))
-            return neighbors[r]
+            return neighbors[int(random.randrange(0, len(neighbors)))]
         else:
             return None
 
@@ -98,6 +107,7 @@ class Cell:
         :param rows: int
         :return: None
         """
+        # This function is just for the A*
         if self.j > 0:
             self.neighbors.append(grid[self.i][self.j - 1])  # top
         if self.i < cols - 1:
