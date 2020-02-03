@@ -20,30 +20,34 @@ class Cell:
         self.neighbors = []
         self.previous = None
 
-    def show(self, screen, w, color, decrement):
+    def show(self, screen, w, color, decrement, path):
         """
         Shows the walls around the cell
         :param screen: screen
         :param w: int
         :param color: color
         :param decrement: int
+        :param path: bool
         :return: None
         """
         x = self.i * w
         y = self.j * w
 
         if self.walls[0]:
-            pygame.draw.line(screen, black, (x, y), (x + w, y), 2)
+            pygame.draw.line(screen, walls, (x, y), (x + w, y), 2)
         if self.walls[1]:
-            pygame.draw.line(screen, black, (x + w, y), (x + w, y + w), 2)
+            pygame.draw.line(screen, walls, (x + w, y), (x + w, y + w), 2)
         if self.walls[2]:
-            pygame.draw.line(screen, black, (x + w, y + w), (x, y + w), 2)
+            pygame.draw.line(screen, walls, (x + w, y + w), (x, y + w), 2)
         if self.walls[3]:
-            pygame.draw.line(screen, black, (x, y + w), (x, y), 2)
+            pygame.draw.line(screen, walls, (x, y + w), (x, y), 2)
 
         if self.visited:
-            rect = pygame.Rect(x + 2 + decrement//2, y + 2 + decrement//2, w - decrement, w - decrement)
-            pygame.draw.rect(screen, color, rect)
+            if path:
+                pygame.draw.circle(screen, color, (x + 2 + w // 2, y + 2 + w // 2), decrement)
+            else:
+                rect = pygame.Rect(x + 2 + decrement // 2, y + 2 + decrement // 2, w - decrement, w - decrement)
+                pygame.draw.rect(screen, color, rect)
 
     def randomNeighbor(self, grid, cols, rows):
         """
@@ -85,20 +89,6 @@ class Cell:
             return neighbors[r]
         else:
             return None
-
-    def highlight(self, screen, w):
-        """
-        highlight the position
-        :param screen: screen
-        :param w: int
-        :return: None
-        """
-        # TODO maybe remove this function
-        # Use cell.show(green) insted
-        x = self.i * w
-        y = self.j * w
-        rect = pygame.Rect(x, y, w, w)
-        pygame.draw.rect(screen, green, rect)
 
     def addNeighbors(self, grid, cols, rows):
         """

@@ -16,11 +16,11 @@ pygame.display.init()
 class Game:
 
     def __init__(self):
-        self.width = 800
-        self.height = 800
+        self.width = 400
+        self.height = 400
         self.w = 50
         self.screen = pygame.display.set_mode((self.width, self.height))
-        self.fps = 60
+        self.fps = 15
         self.grid = [[None for i in range(self.width // self.w)] for j in
                      range(self.height // self.w)]
         self.stack = []
@@ -32,6 +32,7 @@ class Game:
         self.closedSet = []
         self.path = []
 
+        pygame.display.set_icon(pygame.image.load('Logo.ico'))
         pygame.display.set_caption("Maze Solver")
 
     def run(self):
@@ -49,8 +50,6 @@ class Game:
 
             if not self.generated:
                 current.visited = True
-                current.highlight(self.screen, self.w)
-                pygame.display.update()
                 next_cell = current.randomNeighbor(self.grid, self.width // self.w, self.height // self.w)
 
                 if next_cell:
@@ -109,15 +108,6 @@ class Game:
                                 elif pos == 'left' and not current.walls[3]:
                                     canGo = True
 
-                                # if pos == 'top_right' and not current.walls[0] and not current.walls[1]:
-                                #     canGo = True
-                                # elif pos == 'bottom_right' and not current.walls[2] and not current.walls[1]:
-                                #     canGo = True
-                                # elif pos == 'top_left' and not current.walls[0] and not current.walls[3]:
-                                #     canGo = True
-                                # elif pos == 'bottom_left' and not current.walls[2] and not current.walls[3]:
-                                #     canGo = True
-
                                 if canGo:
                                     temp_g = current.g + 1
                                     # Check if i have evaluated the neighbor before
@@ -153,22 +143,23 @@ class Game:
 
         for i in range(self.width // self.w):
             for j in range(self.height // self.w):
-                self.grid[i][j].show(self.screen, self.w, grey, 0)
+                self.grid[i][j].show(self.screen, self.w, bg, 0, False)
         if self.generated:
-            # OpenSet
-            for i in range(len(self.openSet)):
-                self.openSet[i].show(self.screen, self.w, blue, 12)
+            if not self.solved:
+                # OpenSet
+                for i in range(len(self.openSet)):
+                    self.openSet[i].show(self.screen, self.w, blue, 12, False)
 
-            # ClosedSet
-            for i in range(len(self.closedSet)):
-                self.closedSet[i].show(self.screen, self.w, red, 12)
+                # ClosedSet
+                for i in range(len(self.closedSet)):
+                    self.closedSet[i].show(self.screen, self.w, red, 12, False)
 
             # Path
             for i in range(len(self.path)):
-                self.path[i].show(self.screen, self.w, green, 10)
+                self.path[i].show(self.screen, self.w, path, 10, True)
 
-            self.end.show(self.screen, self.w, yellow, 1)
-            self.start.show(self.screen, self.w, yellow, 1)
+            self.end.show(self.screen, self.w, start_end, 25, False)
+            self.start.show(self.screen, self.w, start_end, 25, False)
         pygame.display.flip()
 
     def createGrid(self):
