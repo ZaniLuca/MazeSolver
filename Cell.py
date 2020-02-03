@@ -108,6 +108,7 @@ class Cell:
         :return: None
         """
         # This function is just for the A*
+
         if self.j > 0:
             self.neighbors.append(grid[self.i][self.j - 1])  # top
         if self.i < cols - 1:

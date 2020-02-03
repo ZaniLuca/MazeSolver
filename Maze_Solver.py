@@ -21,6 +21,7 @@ class Game:
         self.w = 50
         self.screen = pygame.display.set_mode((self.width, self.height))
         self.fps = 15
+        # Initialize the 2D array
         self.grid = [[None for i in range(self.width // self.w)] for j in
                      range(self.height // self.w)]
         self.stack = []
@@ -33,7 +34,7 @@ class Game:
         self.path = []
 
         pygame.display.set_icon(pygame.image.load('Logo.ico'))
-        pygame.display.set_caption("Maze Solver")
+        pygame.display.set_caption("Maze Solver -- by Luca Zani")
 
     def run(self):
         """
@@ -42,6 +43,7 @@ class Game:
         """
         clock = pygame.time.Clock()
         self.createGrid()
+        # Start creating the maze from the top left corner
         current = self.grid[0][0]
 
         run = True
@@ -49,9 +51,16 @@ class Game:
             clock.tick(self.fps)
 
             if not self.generated:
+                # each step we mark the current cell as visited
+                # then we get a random neighbor from the current cell
+                # that'll be our next pick
+
                 current.visited = True
                 next_cell = current.randomNeighbor(self.grid, self.width // self.w, self.height // self.w)
 
+                # if there is a neighbor we mark it as visited and remove
+                # the walls between him and the previous cell (called current)
+                # we also put it into the stack to use in case we get stuck
                 if next_cell:
                     next_cell.visited = True
                     self.removeWalls(current, next_cell)
@@ -59,28 +68,41 @@ class Game:
 
                     current = next_cell
 
+                # if we get stack we go back one cell, picking it up from the stack
                 elif len(self.stack) > 0:
                     current = self.stack.pop()
+
+                # else if there isn't anything in the stack it means that we reached
+                # the end and we are done generating the maze
+                # we also set up our start and end point, and put the start point into the open set
                 else:
                     self.generated = True
                     self.start = self.grid[0][0]
                     self.end = self.grid[self.width // self.w - 1][self.height // self.w - 1]
                     self.openSet.append(self.start)
             else:
-                # Solving
+                # if we have already created a maze and it hasn't been solved yet
+                # we can start the A* pathfinding
                 if not self.solved:
                     if len(self.openSet) > 0:
-                        best = 0  # Index of the lowest F cell
+                        # best is the index of the variable with the lowest F
+                        # at start we set it to --> 0
+                        best = 0
+
+                        # foreach element in the open set we check what is the lowest in F cost
                         for i in range(len(self.openSet)):
                             if self.openSet[i].f < self.openSet[best].f:
                                 best = i
 
+                        # we proceed with only the best cell
                         current = self.openSet[best]
 
-                        # Win Condition
+                        # if the best cell is also the end point it means that we reached the end
                         if self.openSet[best] == self.end:
                             temp = current
                             self.path.append(temp)
+
+                            # so we wanna walk back the path from the end to the start
                             while temp.previous:
                                 self.path.append(temp.previous)
                                 temp = temp.previous
@@ -88,40 +110,54 @@ class Game:
                             self.solved = True
                             print('Done!')
 
+                        # else we haven't reach the end, we remove the current cell from the openSet
+                        # and put it into the closedSet
                         self.openSet.remove(current)
                         self.closedSet.append(current)
 
-                        # Evaluating neighbors
+                        # now we need to proceed into a new cell
+                        # we check all the nearby neighbors of the current cell and check if
+                        # they exists and aren't already in the closed set
                         for i in range(len(current.neighbors)):
                             neighbor = current.neighbors[i]
 
                             if neighbor not in self.closedSet:
-                                canGo = False
+
+                                # can_goo means that we can go into that cell and there is no wall
+                                # beetween the current cell and the selected neighbor
+                                can_go = False
                                 pos = self.checkPosition(current, neighbor)
 
                                 if pos == 'top' and not current.walls[0]:
-                                    canGo = True
+                                    can_go = True
                                 elif pos == 'right' and not current.walls[1]:
-                                    canGo = True
+                                    can_go = True
                                 elif pos == 'bottom' and not current.walls[2]:
-                                    canGo = True
+                                    can_go = True
                                 elif pos == 'left' and not current.walls[3]:
-                                    canGo = True
+                                    can_go = True
 
-                                if canGo:
+                                if can_go:
+                                    # if there is no wall we proceed and give the new neighbor the G cost
+                                    # from the current cell +1 because we moved one spot
                                     temp_g = current.g + 1
-                                    # Check if i have evaluated the neighbor before
-                                    # if so we have a better G score
+
+                                    # also we need to check if the neighbor hasn't been evaluated before
+                                    # if so we look if the new score is better (low is best)
                                     if neighbor in self.openSet:
                                         if temp_g < neighbor.g:
                                             neighbor.g = temp_g
+
                                     # otherwise just give the neighbor the temp_g
                                     else:
                                         neighbor.g = temp_g
                                         self.openSet.append(neighbor)
 
+                                    # then we can calculate the H cost and the F cost based on the G and H costs
                                     neighbor.h = self.heuristic(neighbor)
                                     neighbor.f = neighbor.g + neighbor.h
+
+                                    # finally we mark the previous cell from the neighbor
                                     neighbor.previous = current
 
                     else:
