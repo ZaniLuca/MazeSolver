@@ -1,8 +1,17 @@
 # MazeSolver
 MazeSolver in python, generate a random maze and then solves it using the A* algorithm
+the maze is generated with a **Recrusive Backtracker** alghorithm using depth-first search
+https://en.wikipedia.org/wiki/Maze_generation_algorithm  
+https://en.wikipedia.org/wiki/Depth-first_search  
+https://github.com/ZaniLuca/MazeGenerator  
 
+and then solved using the A* Start pathfinding alghorithm:  
+https://www.geeksforgeeks.org/a-search-algorithm/  
+https://github.com/ZaniLuca/A-Star
 # Screenshots
-![Generation](https://user-images.githubusercontent.com/59318963/73614229-7dedcb80-45fd-11ea-9c5e-f7a1d1cc28a2.png) ![Solving](https://user-images.githubusercontent.com/59318963/73614231-7e866200-45fd-11ea-8997-0229455f8021.png) ![Solved](https://user-images.githubusercontent.com/59318963/73614230-7dedcb80-45fd-11ea-88b3-e93b2f4e9701.png)
+![Solved](https://user-images.githubusercontent.com/59318963/73696304-54f03800-46dc-11ea-9771-17cf2b9d07ec.PNG)
+![Generating](https://user-images.githubusercontent.com/59318963/73696305-54f03800-46dc-11ea-8e1f-14722947d327.PNG)
+![Solving](https://user-images.githubusercontent.com/59318963/73696307-5588ce80-46dc-11ea-8edb-3af772670f37.PNG)
 
 Special thanks to Daniel Shiffman from TheCodingTrain for the awesomes tutorials on **Recursive Backtraking** and **A Star Pathfinding**
 https://www.youtube.com/user/shiffman
