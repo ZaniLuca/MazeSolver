@@ -10,10 +10,10 @@ https://www.geeksforgeeks.org/a-search-algorithm/
 https://github.com/ZaniLuca/A-Star
 # How to install
 Just run the Maze_Solver.py file, make sure to have pygame 1.9.6 installed, otherwise do:  
-	```bash
+	```
 	pip install -r requirements.txt
 	```
-or 	```bash
+or 	```
 	pip3 install pygame
 	```
 to install the latest version of pygame
